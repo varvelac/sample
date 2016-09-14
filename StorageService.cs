@@ -2,12 +2,12 @@
 using Amazon.S3;
 using Amazon.S3.Model;
 using Amazon.S3.Transfer;
-using Sabio.Web.Classes;
-using Sabio.Web.Domain;
-using Sabio.Web.Models.Requests;
-using Sabio.Web.Models.Responses;
-using Sabio.Web.Services;
-using Sabio.Web.Services.Interfaces;
+using RentApp.Web.Classes;
+using RentApp.Web.Domain;
+using RentApp.Web.Models.Requests;
+using RentApp.Web.Models.Responses;
+using RentApp.Web.Services;
+using RentApp.Web.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -20,7 +20,7 @@ public class StorageService : IStorageService
 {
     private IAmazonS3 client = null;
 
-    private const string awsBucketName = "sabio-training/C19";
+    private const string awsBucketName = "RentApp-training/C19";
 
     private IUserService _userServices;
     private IFileServices _fileServices;
@@ -55,14 +55,14 @@ public class StorageService : IStorageService
 
 
 
-    public List<Sabio.Web.Domain.FileUpload> local(CustomMultipartFormDataStreamProvider provider)
+    public List<RentApp.Web.Domain.FileUpload> local(CustomMultipartFormDataStreamProvider provider)
     {
 
-        List<Sabio.Web.Domain.FileUpload> List = new List<Sabio.Web.Domain.FileUpload>();
+        List<RentApp.Web.Domain.FileUpload> List = new List<RentApp.Web.Domain.FileUpload>();
 
         foreach (MultipartFileData file in provider.FileData)
         {
-            Sabio.Web.Domain.FileUpload fileDesc = new Sabio.Web.Domain.FileUpload();
+            RentApp.Web.Domain.FileUpload fileDesc = new RentApp.Web.Domain.FileUpload();
             fileDesc.Name = file.Headers.ContentDisposition.FileName;
             List.Add(fileDesc);
         }
