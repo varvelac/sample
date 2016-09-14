@@ -1,7 +1,7 @@
-﻿if (!sabio.upload) {
-    sabio.upload = { services: {} };
+﻿if (!upload) {
+    upload = { services: {} };
 }
-sabio.upload.services.upload = function (data, onSuccess, onError) {
+upload.services.upload = function (data, onSuccess, onError) {
 
     var url = "/api/upload/"
 
@@ -19,7 +19,7 @@ sabio.upload.services.upload = function (data, onSuccess, onError) {
     $.ajax(url, settings)
 }
 
-sabio.upload.services.uploadAvatar = function (data, onSuccess, onError) {
+upload.services.uploadAvatar = function (data, onSuccess, onError) {
 
     var url = "/api/upload/avatar"
 
