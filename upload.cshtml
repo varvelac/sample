@@ -36,7 +36,7 @@
 {
 
 
-    <script src="~/Scripts/upload.service.js"></script>
+    <script src="~/Scripts/RentApp.upload.service.js"></script>
     <script type="text/javascript">
         (function () {
             "use strict";
@@ -47,9 +47,9 @@
             uploadServiceFactory.$inject = ['$baseService', '$sabio'];
 
             function uploadServiceFactory($baseService) {
-                var aServiceObject = upload.services;
+                var aRentAppServiceObject = RentApp.upload.services;
 
-                var newService = $baseService.merge(true, {}, aServiceObject, $baseService);
+                var newService = $baseService.merge(true, {}, aRentAppServiceObject, $baseService);
 
                 return newService;
             }
