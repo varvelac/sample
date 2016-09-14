@@ -1,10 +1,10 @@
 ﻿
-using Sabio.Web.Classes;
-using Sabio.Web.Domain;
-using Sabio.Web.Models.Requests;
-using Sabio.Web.Models.Responses;
-using Sabio.Web.Services;
-using Sabio.Web.Services.Interfaces;
+using RentApp.Web.Classes;
+using RentApp.Web.Domain;
+using RentApp.Web.Models.Requests;
+using RentApp.Web.Models.Responses;
+using RentApp.Web.Services;
+using RentApp.Web.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -50,7 +50,7 @@ public class UploadApiController : ApiController
             await Request.Content.ReadAsMultipartAsync(provider);
 
 
-            ItemsResponse<Sabio.Web.Domain.FileUpload> response = new ItemsResponse<Sabio.Web.Domain.FileUpload>();
+            ItemsResponse<RentApp.Web.Domain.FileUpload> response = new ItemsResponse<RentApp.Web.Domain.FileUpload>();
             response.Items = _storageService.local(provider);
 
             return Request.CreateResponse(response);
@@ -89,7 +89,7 @@ public class UploadApiController : ApiController
         IList<HttpContent> files = provider.Files;
 
 
-        List<Sabio.Web.Domain.FileUpload> List = new List<Sabio.Web.Domain.FileUpload>();
+        List<RentApp.Web.Domain.FileUpload> List = new List<RentApp.Web.Domain.FileUpload>();
 
         foreach (HttpContent file in files)
         {
@@ -117,7 +117,7 @@ public class UploadApiController : ApiController
             List.Add(fileDesc);
         }
 
-        ItemsResponse<Sabio.Web.Domain.FileUpload> response = new ItemsResponse<Sabio.Web.Domain.FileUpload>();
+        ItemsResponse<RentApp.Web.Domain.FileUpload> response = new ItemsResponse<RentApp.Web.Domain.FileUpload>();
         response.Items = List;
 
         return this.Request.CreateResponse(response);
@@ -137,10 +137,10 @@ public class UploadApiController : ApiController
 
         InMemoryMultipartStreamProvider provider = await Request.Content.ReadAsMultipartAsync<InMemoryMultipartStreamProvider>(new InMemoryMultipartStreamProvider());
 
-        Sabio.Web.Domain.FileUpload file = await _storageService.UploadAvatar(provider);
+        RentApp.Web.Domain.FileUpload file = await _storageService.UploadAvatar(provider);
 
 
-        ItemResponse<Sabio.Web.Domain.FileUpload> response = new ItemResponse<Sabio.Web.Domain.FileUpload>();
+        ItemResponse<RentApp.Web.Domain.FileUpload> response = new ItemResponse<RentApp.Web.Domain.FileUpload>();
         response.Item = file;
 
         return Request.CreateResponse(response);
