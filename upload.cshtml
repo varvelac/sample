@@ -36,7 +36,7 @@
 {
 
 
-    <script src="~/Scripts/sabio.upload.service.js"></script>
+    <script src="~/Scripts/upload.service.js"></script>
     <script type="text/javascript">
         (function () {
             "use strict";
@@ -46,10 +46,10 @@
 
             uploadServiceFactory.$inject = ['$baseService', '$sabio'];
 
-            function uploadServiceFactory($baseService, $sabio) {
-                var aSabioServiceObject = sabio.upload.services;
+            function uploadServiceFactory($baseService) {
+                var aServiceObject = upload.services;
 
-                var newService = $baseService.merge(true, {}, aSabioServiceObject, $baseService);
+                var newService = $baseService.merge(true, {}, aServiceObject, $baseService);
 
                 return newService;
             }
