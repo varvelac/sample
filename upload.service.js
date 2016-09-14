@@ -1,7 +1,7 @@
-﻿if (!upload) {
-    upload = { services: {} };
+﻿if (!RentApp.upload) {
+    RentApp.upload = { services: {} };
 }
-upload.services.upload = function (data, onSuccess, onError) {
+RentApp.upload.services.upload = function (data, onSuccess, onError) {
 
     var url = "/api/upload/"
 
@@ -19,7 +19,7 @@ upload.services.upload = function (data, onSuccess, onError) {
     $.ajax(url, settings)
 }
 
-upload.services.uploadAvatar = function (data, onSuccess, onError) {
+RentApp.upload.services.uploadAvatar = function (data, onSuccess, onError) {
 
     var url = "/api/upload/avatar"
 
