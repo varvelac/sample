@@ -1,0 +1,124 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+
+}
+@Styles.Render("~/Content/userProfile.css")
+
+
+<div data-ng-controller="uploadController as ctrl">
+    <div>
+        <h1 style="color:darkcyan;">File Uploads</h1>
+        <div>
+            <h4 style="text-align:center" for=""><strong>CLICK OR DRAG IN HERE</strong>.</h4>
+            <input class="uploadInputImg" type="file" id="fileUpload" ng-model="ctrl.files" accept="Image/*" multiple><br />
+            <button class="btn btn-lg btn-primary" id="button" ng-click="ctrl.selectUpload()">  UPLOAD </button>
+        </div>
+    </div>
+    <div style="height:50px;"></div>
+    <div class="uploadDivImg">
+        <img class="uploadImgImg" ng-repeat="item in ctrl.items"
+             ng-src="{{ctrl.imgPrefix}}{{item.path}}" />
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+@section scripts
+{
+
+
+    <script src="~/Scripts/sabio.upload.service.js"></script>
+    <script type="text/javascript">
+        (function () {
+            "use strict";
+
+            angular.module(APPNAME)
+                .factory('$uploadServices', uploadServiceFactory);
+
+            uploadServiceFactory.$inject = ['$baseService', '$sabio'];
+
+            function uploadServiceFactory($baseService, $sabio) {
+                var aSabioServiceObject = sabio.upload.services;
+
+                var newService = $baseService.merge(true, {}, aSabioServiceObject, $baseService);
+
+                return newService;
+            }
+
+            angular.module(APPNAME)
+                .controller('uploadController', UploadController);
+
+            UploadController.$inject = ['$scope', '$baseController', "$uploadServices"];
+
+            function UploadController($scope, $baseController, $uploadServices) {
+
+                var vm = this;
+
+                vm.headingInfo = "Upload Files";
+                vm.items = null;
+                vm.selectedUpload = null;
+                vm.files = null;
+                vm.$uploadServices = $uploadServices;
+                vm.$scope = $scope;
+                vm.receiveItems = _receiveItems;
+                vm.selectUpload = _selectUpload;
+                vm.onEmpError = _onEmpError;
+                $baseController.merge(vm, $baseController);
+
+                vm.imgPrefix = vm.$sabio.imgPrefix;
+
+                vm.notify = vm.$uploadServices.getNotifier($scope);
+
+
+                function _selectUpload(files) {
+
+                    vm.files = document.querySelector("#fileUpload").files;
+
+                    var data = new FormData();
+
+                    $.each(vm.files, function (key, value) {
+                        data.append(key, value);
+                    });
+
+                    vm.$uploadServices.upload(data, vm.receiveItems, vm.onEmpError);
+                }
+                function _receiveItems(data) {
+                    vm.notify(function () {
+                        vm.items = data.items;
+                    });
+                }
+                function _onEmpError(jqXhr, error) {
+                }
+            }
+        })();
+
+    </script>
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

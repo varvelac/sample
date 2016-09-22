@@ -1,0 +1,138 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+
+<div data-ng-controller="MARController as ctrl" ng-cloak>
+
+
+    <div style="height:100px"></div>
+
+
+    <div ng-show="ctrl.message" class="col-md-offset-3">
+        <div><h2 style="color:cadetblue">{{ctrl.success}}</h2></div>
+    </div>
+    <br />
+
+    <div class="row col-md-offset-3" style="display:inline-block">
+
+        <div class="col-md-4 ">
+            <button style="height:75px; width:200px; position:center" type="button" class="btn btn-primary btn-lg" ng-click="ctrl.MARGet()">Get All Data</button>
+        </div>
+        <div class="col-md-4"></div>
+        <div class="col-md-4 ">
+            <button style="height:75px; width:200px; position:center" type="button" class="btn btn-primary btn-lg" ng-click="ctrl.datePicker()">Update Data By Date</button>
+            <br />
+            <div ng-hide="ctrl.datePicker">
+                <input ng-model="ctrl.date" style="width:200px;" id="date" type="date" />
+                <br />
+                <button style="width:200px;" class="btn btn-primary btn-lg" type="button" ng-click="ctrl.MARUpdate()"> UPDATE</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+@section scripts{
+    <script src="~/Scripts/moment.js"></script>
+    <script src="~/Scripts/sabio.mar.services.js"></script>
+
+    <script type="text/javascript">
+
+        (function () {
+            "use strict";
+
+            angular.module(APPNAME)
+                .factory('$MARServices', MARServiceFactory);
+
+            MARServiceFactory.$inject = ['$baseService', '$sabio'];
+
+            function MARServiceFactory($baseService, $sabio) {
+                var aSabioServiceObject = sabio.mar.services;
+
+                var newService = $baseService.merge(true, {}, aSabioServiceObject, $baseService);
+
+                return newService;
+            }
+
+            angular.module(APPNAME)
+                .controller('MARController', MARController);
+
+            MARController.$inject = ['$scope', '$baseController', "$MARServices"];
+
+            function MARController($scope, $baseController, $MARServices) {
+
+                var vm = this;
+
+                vm.$MARServices = $MARServices;
+                vm.$scope = $scope;
+                vm.MARUpdate = _MARUpdate;
+                vm.MARGet = _MARGet;
+                vm.onSuccess = _onSuccess;
+                vm.onError = _onError;
+                vm.onSuccessUpload = _onSuccessUpload;
+                vm.datePicker = _datePicker;
+
+                $baseController.merge(vm, $baseController);
+                vm.$systemEventService.broadcast("heading", { 'heading': 'Maximum Allowable Rent Bulk Upload' })
+
+                function _datePicker() {
+
+                    vm.datePicker = false;
+                }
+
+                function _MARGet() {
+
+                    vm.$MARServices.getFirst(_onSuccessUpload, _onError)
+                }
+
+                function _onSuccessUpload(data) {
+
+                    if (confirm("Retrieved " + data.length + " records from the dataset! Do you want to Upload?") == true) {
+
+                        var i, j, dataChunk, chunk = 5000;
+                        for (i = 0, j = data.length; i < j; i += chunk) {
+                            dataChunk = data.slice(i, i + chunk);
+
+                            vm.$MARServices.upload(dataChunk, _onSuccess, _onError);
+                            sabio.page.dataLength = data.length;
+                        }
+                    }
+                    else {
+                        console.log("Canceled")
+                    }
+                }
+
+                function _MARUpdate() {
+
+                    var date = moment(vm.date).format("YYYY-MM-DD");
+
+                    console.log(date);
+                    vm.$MARServices.update(date, _onSuccessUpload, _onError)
+                }
+
+                function _onSuccess() {
+                    vm.success = "" + sabio.page.dataLength + " records have been updated!";
+                    vm.message = true;
+                    vm.$alertService.success("" + sabio.page.dataLength + " records have been updated!");
+
+                    $scope.$apply();
+                }
+
+                function _onError() {
+
+                    console.log("not working");
+                }
+            }
+
+        })();;
+
+    </script>
+
+
+}

@@ -1,0 +1,710 @@
+﻿f@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+@Styles.Render("~/Content/userProfile.css")
+
+<head>
+    <script type="text/javascript">
+
+
+        function stopRKey(evt) {
+            var evt = (evt) ? evt : ((event) ? event : null);
+            var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
+            if ((evt.keyCode == 13) && (node.type == "text")) { return false; }
+        }
+
+        document.onkeypress = stopRKey;
+
+    </script>
+</head>
+
+<div data-ng-controller="wizardController as ctrl" ng-app="mainApp" ng-cloak>
+
+    <div class="form-group-bottom-link"></div>
+
+    <form name="outerForm" class="tab-form-demo">
+        <uib-tabset active="activeForm">
+            <uib-tab index="0" heading="Addresses" active="data.static1" class="disabled">
+                <ng-form name="nestedForm">
+                    <div class="form-group">
+                        <label>Name</label>
+
+                        <div class='container-fluid typeahead-demo'>
+
+                            <input type="text" ng-model="asyncSelected" placeholder="Locations"
+                                   uib-typeahead="address for address in getLocation($viewValue)"
+                                   typeahead-loading="loadingLocations"
+                                   typeahead-no-results="noResults" class="form-control"
+                                   ng-enter="ctrl.doNothing()">
+
+                        </div>
+                        <div class="form-group-bottom-link"></div>
+                        <div ng-include="'square-temp'"></div>
+
+                    </div>
+                </ng-form>
+            </uib-tab>
+            <!---------------------Listing Form-------------------------->
+
+            <uib-tab id="tab1" index="1" heading="Listings" active="data.static2" disable="true">
+                <div class="container" id="formContainer">
+
+                    <ng-form class="newListingsForm" id="registerForm" name="ctrl.registerForm" novalidate>
+                        <div class="row col-sm-6">
+                            <fieldset class="form-group">
+                                <label for="rentCost">Rent cost (per month)</label>
+                                <input type="number" integer style="width:250px;" class="form-control" id="rentCost" name="RentCost" ng-model="ctrl.newlisting.rentCost"
+                                       ng-class="{'error': ctrl.formFillingError && !ctrl.registerForm.RentCost.$valid}" required />
+                                <span style="color:red" class="error" ng-show="ctrl.formFillingError && ctrl.registerForm.RentCost.$error.required" ng-cloak>Rent Cost Input Required</span><br />
+                            </fieldset>
+                            <fieldset class="form-group">
+                                <label for="leaseTerms">Lease terms in months</label>
+                                <input type="number" integer style="width:250px;" class="form-control" id="leaseTerms" name="LeaseTerms" ng-model="ctrl.newlisting.leaseTerms"
+                                       ng-class="{'error': ctrl.formFillingError && !ctrl.registerForm.LeaseTerms.$valid}" required />
+                                <span style="color:red" class="error" ng-show="ctrl.formFillingError && ctrl.registerForm.LeaseTerms.$error.required" ng-cloak>Lease Terms Input Required</span><br />
+                            </fieldset>
+                            <fieldset class="form-group">
+                                <label for="dateAvailable">date available</label>
+                                <input type="date" style="width:250px;" class="form-control" id="dateAvailable" name="AvailableDate" ng-value="" ng-model="ctrl.newlisting.availableDate"
+                                       ng-class="{'error': ctrl.formFillingError && !ctrl.registerForm.AvailableDate.$valid}" required />
+                                <span style="color:red" class="error" ng-show="ctrl.formFillingError && ctrl.registerForm.AvailableDate.$error.required" ng-cloak>Date of Availability Input Required</span><br />
+                            </fieldset>
+                            <fieldset class="form-group">
+                                <label for="listingAvailable">Listing Available</label><br />
+                                <input type="checkbox" name="Status" id="listing" value="true" ng-model="ctrl.newlisting.status"> Yes
+                                <input type="hidden" name="Status" value="false" ng-model="ctrl.newlisting.Status">
+                            </fieldset>
+                            <fieldset class="form-group">
+                                <label for="parkingIncluded">Parking included in rent</label><br />
+                                <input type="checkbox" name="ParkingIncluded" id="parking" value="true" ng-model="ctrl.newlisting.parkingIncluded"> Yes
+                                <input type="hidden" name="ParkingIncluded" value="false" ng-model="ctrl.newlisting.ParkingIncluded">
+                            </fieldset>
+                            <fieldset class="form-group">
+                                <label for="utilitiesIncluded">utilities included in rent</label><br />
+                                <input type="checkbox" name="UtilitiesIncluded" id="utilities" value="true" ng-model="ctrl.newlisting.utilitiesIncluded"> Yes
+                                <input type="hidden" name="UtilitiesIncluded" value="false" ng-model="ctrl.newlisting.UtilitiesIncluded">
+                            </fieldset>
+                            <fieldset class="form-group">
+                                <label for="featuredListing">Mark as Featured Listing</label><br />
+                                <input type="checkbox" name="Featured" id="featuredListing" value="true" ng-model="ctrl.newlisting.featured"> Yes
+                                <input type="hidden" name="Featured" value="false" ng-model="ctrl.newlisting.Featured">
+                            </fieldset>
+                        </div>
+                        <div class="row col-xs-12 col-sm-6">
+                            <fieldset class="form-group">
+                                <label for="moreInfo">more info/ description</label>
+                                <textarea class="form-control" name="MoreInfo" id="moreInfo" rows="3" style="width:400px;" ng-model="ctrl.newlisting.moreInfo"></textarea>
+                            </fieldset>
+                            <fieldset class="form-group">
+                                <label for="ManagementOwner">Property owner or management company</label>
+                                <input type="text" style="width:250px;" class="form-control" id="managementOwner" name="ManagementOwner" ng-model="ctrl.newlisting.managementOwner"
+                                       ng-class="{'error': ctrl.formFillingError && !ctrl.registerForm.ManagementOwner.$valid}" required />
+                                <span style="color:red" class="error" ng-show="ctrl.formFillingError && ctrl.registerForm.ManagementOwner.$error.required" ng-cloak>Management Owner Input Required</span><br />
+                            </fieldset>
+                            <fieldset class="form-group">
+                                <label for="Bedrooms">bedrooms</label>
+                                <input type="number" integer style="width:250px;" class="form-control" id="bedrooms" name="Bedrooms" ng-model="ctrl.newlisting.bedrooms"
+                                       ng-class="{'error': ctrl.formFillingError && !ctrl.registerForm.Bedrooms.$valid}" required />
+                                <span style="color:red" class="error" ng-show="ctrl.formFillingError && ctrl.registerForm.Bedrooms.$error.required" ng-cloak>Bedrooms Input Required</span><br />
+                            </fieldset>
+                            <fieldset class="form-group">
+                                <label for="Bathrooms">Bathrooms</label>
+                                <input type="number" integer style="width:250px;" class="form-control" id="bathrooms" name="Bathrooms" ng-model="ctrl.newlisting.bathrooms"
+                                       ng-class="{'error': ctrl.formFillingError && !ctrl.registerForm.Bathrooms.$valid}" required />
+                                <span style="color:red" class="error" ng-show="ctrl.formFillingError && ctrl.registerForm.Bathrooms.$error.required" ng-cloak>Bathrooms Input Required</span><br />
+                            </fieldset>
+                            <fieldset class="form-group">
+                                <label for="SquareFootage">Square Footage</label>
+                                <input type="number" integer style="width:250px;" class="form-control" id="squareFootage" name="SquareFootage" ng-model="ctrl.newlisting.squareFootage"
+                                       ng-class="{'error': ctrl.formFillingError && !ctrl.registerForm.SquareFootage.$valid}" required />
+                                <span style="color:red" class="error" ng-show="ctrl.formFillingError && ctrl.registerForm.SquareFootage.$error.required" ng-cloak>Square Footage Input Required</span><br />
+                            </fieldset>
+                        </div>
+                        <button type="button" class="btn btn-secondary" ng-click="data.static1 = true"> Back </button>
+
+                        <button ng-show="ctrl.registerForm.$valid" ng-click="ctrl.listingData(); data.static3 = true" type="submit" class="btn btn-primary ">Submit and Next</button>
+
+                    </ng-form>
+                    <!---------------------Listing Form-------------------------->
+
+                </div>
+            </uib-tab>
+
+            <uib-tab id="tab3" index="3" heading="File upload" active="data.static3" disable="true">
+                <div>
+                    <div>
+                        <h4 style="text-align:center" for=""><strong>CLICK OR DRAG IN HERE</strong>.</h4>
+                        <input class="uploadInputImg" type="file" id="fileUpload" ng-model="ctrl.files" accept="Image/*" multiple><br />
+                        <button class="btn btn-lg btn-primary" id="button" ng-click="ctrl.selectUpload()">  UPLOAD </button>
+                    </div>
+                </div>
+                <div style="height:50px;"></div>
+                <h3 style="margin:auto">{{ctrl.uploadSuccess}}</h3>
+                <div style="height:20px"></div>
+                <h4 style="color:red">{{ctrl.uploadFailed}}</h4>
+                <div style="height:20px"></div>
+                <div class="uploadDivImg">
+                    <img ng-click="ctrl.selectPhoto(item)"
+                         ng-class="{imgSelected : ctrl.selectedPhoto == item.id}"
+                         class="uploadImgImg" ng-repeat="item in ctrl.items"
+                         ng-src="{{ctrl.imgPrefix}}{{item.path}}" />
+                </div>
+                <br />
+                <button type="button" class="btn btn-secondary" ng-click="data.static2 = true"> Back </button>
+                <button ng-show="ctrl.showButtonPhoto" type="button" class="btn btn-primary" ng-click="data.static4 = true"> Next </button>
+            </uib-tab>
+            <!------------------Review--------------------------->
+
+
+
+            <uib-tab id="4" index="4" heading="Review" active="data.static4" disable="true">
+                <div style="height:50px"></div>
+                <div ng-show="ctrl.successfulUpload">
+                    <div class="col-sm-10">
+                        <div class="listing-detail">
+                            <div class="listing-detail-attribute">
+                                <div class="key">Address</div>
+                                <div class="value">{{ctrl.addressById.address1}}</div><br />
+                                <div class="value" ng-hide="ctrl.address2 == null"> Unit {{ctrl.addressById.address2}}</div>
+                            </div><!-- /.listing-detail-attribute -->
+
+                            <div class="listing-detail-attribute">
+                                <div class="key">City</div>
+                                <div class="value">{{ctrl.addressById.city}}</div>
+                            </div><!-- /.listing-detail-attribute -->
+                            <div class="listing-detail-attribute">
+                                <div class="key">Zip Code</div>
+                                <div class="value">{{ctrl.addressById.zipCode}}</div>
+                            </div><!-- /.listing-detail-attribute -->
+                            <div class="listing-detail-attribute">
+                                <div class="key">Rent</div>
+                                <div class="value">
+                                    {{ctrl.listing.rentCost | currency}}/month
+                                </div>
+                            </div><!-- /.listing-detail-attribute -->
+                        </div><!-- /.listing-detail-attributes -->
+                    </div>
+                    <div class="listing-detail col-md-8 col-lg-9">
+                        <div style="height:25px"></div>
+                        <button style="float:right" type="button" class="btn btn-secondary" ng-click="data.static1 = true"> Edit </button>
+                        <div class="form-group-bottom-link"></div>
+                        <div style="height:25px"></div>
+                    </div>
+
+
+                    <!---------------Carousel--------------------->
+                    <div style="height:150px"></div>
+                    <div uib-carousel active="active" interval="myInterval" no-wrap="noWrapSlides" style="width:984px; float:left">
+                        <div uib-slide ng-repeat="item in ctrl.items track by $index" index="slide.id">
+                            <img ng-src="{{ctrl.imgPrefix}}{{item.path}}" style="margin:auto; width: auto; width: auto; height:500px"
+                                 ng-class="{imgSelected: ctrl.selectedPhoto == item.id }"
+                                 ng-model="ctrl.primaryPhoto">
+                            <div class="carousel-caption">
+                                <h3 style="font:bold black">{{ ctrl.selectedPhoto == item.id && "Primary Picture" || "Picture " + ($index + 1)}}</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="height:40px"></div>
+                    <div class="listing-detail col-md-8 col-lg-9">
+                        <div style="height:25px"></div>
+                        <button style="float:right" type="button" class="btn btn-secondary" ng-click="data.static3 = true"> Edit </button>
+                        <div class="form-group-bottom-link"></div>
+                        <div style="height:25px"></div>
+                    </div>
+
+
+
+                    <div class="listing-detail col-md-8 col-lg-9">
+
+
+
+                        <div class="row">
+                            <div class="col-lg-5">
+                                <div class="overview">
+                                    <h2>Listing Attributes</h2>
+                                    <ul>
+                                        <li><strong>Managment Company</strong><span>{{ctrl.listing.managementOwner}}</span></li>
+                                        <li><strong>Lease Term</strong><span>{{ctrl.listing.leaseTerms}} months</span></li>
+                                        <li><strong>Availability</strong><span>{{ctrl.listing.availableDate | date}}</span></li>
+                                        <li><strong>Bedrooms</strong><span>{{ctrl.listing.bedrooms}}</span></li>
+                                        <li><strong>Bathrooms</strong><span>{{ctrl.listing.bathrooms}}</span></li>
+                                        <li><strong>Area</strong><span>{{ctrl.listing.squareFootage}} Sqft.</span></li>
+                                    </ul>
+                                </div><!-- /.overview -->
+                            </div><!-- /.col-* -->
+
+                            <div class="col-lg-7">
+                                <h2>Listing Description</h2>
+
+                                <p>
+                                    {{ctrl.listing.moreInfo}}
+                                </p>
+                            </div><!-- /.col-* -->
+                        </div><!-- /.row -->
+                        <button style="float:right" type="button" class="btn btn-secondary" ng-click="data.static2 = true"> Edit </button>
+
+                        <!-- /.call-to-action-small -->
+                        <!-- /.comment-create -->
+
+                        <div class="form-group-bottom-link"></div>
+
+                        <h2>Options</h2>
+                        <ul class="amenities">
+                            <li class="{{ctrl.listing.status}}">Available</li>
+                            <li class="{{ctrl.listing.featured}}">Featured</li>
+                            <li class="{{ctrl.listing.utilitiesIncluded}}">Utilities Included</li>
+                            <li class="{{ctrl.listing.parkingIncluded}}">Parking Included</li>
+                        </ul>
+                        <button style="float:right" type="button" class="btn btn-secondary" ng-click="data.static2 = true"> Edit </button>
+
+                        <div class="form-group-bottom-link"></div>
+                        <button type="button" class="btn btn-primary" ng-click="ctrl.confirmSubmit()"> Confirm and Submit </button>
+
+                        <div style="height:50px"></div>
+                        <div class="form-group-bottom-link"></div>
+
+                    </div>
+                </div>
+                <div ng-hide="ctrl.successfulUpload">
+                    <div style="height:50px"></div>
+                    <div class="col-sm-12">
+                        <h1 style="text-align:center">You have successfully added a listing</h1>
+                        <div style="height:200px"></div>
+                        <div style="width: 50%;margin: 0 auto;">
+                            <a href="http://rentapp.dev/listings/list" class="btn btn-primary">Click Here to view your listings</a>
+                            <a href="javascript:history.go(0)" class="btn btn-secondary">Click here to add another listing</a>
+                        </div>
+                    </div>
+                </div>
+            </uib-tab>
+        </uib-tabset>
+    </form>
+
+
+
+
+
+
+
+
+
+
+    <script type="text/ng-template" id="square-temp">
+        <!--  Address Template    -->
+        <div class="container">
+            <div ng-repeat="address in ctrl.addresses | filter:address">
+                <div class="clearfix" ng-if="$index % 3 == 0"></div>
+                <div class="template" id="{{address.id}}" ng-model="ctrl.template">
+                    <div class="col-xl-4">
+                        <div class="listing-row"
+                             ng-click="ctrl.select(address) ; ctrl.selectedTile(address.id); showButtonAddress = true"
+                             ng-class="{selected: ctrl.myVar == address.id }">
+                            <div class="listing-row-inner">
+
+                                <img src="http://findicons.com/files/icons/1580/devine_icons_part_2/128/home.png"
+                                     alt="address icon" style="width:100px;height:100px;">
+
+                                @*<div class="listing-row-image"
+                                         style="background-image: url('http://findicons.com/files/icons/1580/devine_icons_part_2/128/home.png');
+                                         background-size: 50px 50px">
+                                    </div>*@
+
+                                <div class="listing-row-content">
+                                    <h3 style="height:40px;">
+                                        <a href="agents-detail.html" class="temp-street">{{address.address1}}</a><br>
+                                    </h3><h6 ng-hide="address.address2 == null">
+                                        Unit {{address.address2}}
+                                    </h6><h6 ng-show="address.address2 == null">-</h6>
+                                    <p class="citySt">
+                                        {{address.city}}
+                                    </p>
+                                    <button ng-show="ctrl.myVar == address.id " type="button" class="btn btn-primary" ng-click="data.static2 = true"> Next </button>
+                                    <div class="listing-row-subtitle">
+                                    </div><!-- /.listing-row-subtitle -->
+                                </div><!-- /.listing-row-content -->
+                            </div><!-- /.listing-row-inner -->
+                        </div><!-- /.listing-row -->
+                    </div><!-- /.col-* -->
+                </div>
+            </div>
+        </div>
+    </script>
+
+
+</div>
+
+
+<script type="text/ng-template" id="customPopupTemplate.html">
+    <div class="custom-popup-wrapper"
+         ng-style="{top: position().top+'px', left: position().left+'px'}"
+         style="display: block;"
+         ng-show="isOpen() && !moveInProgress"
+         aria-hidden="{{!isOpen()}}">
+        <p class="message">select location from drop down.</p>
+
+        <ul class="dropdown-menu" role="listbox">
+            <li class="uib-typeahead-match" ng-repeat="match in matches track by $index" ng-class="{active: isActive($index) }"
+                ng-mouseenter="selectActive($index)" ng-click="selectMatch($index)" role="option" id="{{::match.id}}">
+                <div uib-typeahead-match index="$index" match="match" query="query" template-url="templateUrl"></div>
+            </li>
+        </ul>
+    </div>
+</script>
+
+
+
+
+
+
+
+
+
+
+
+@section scripts{
+    <script src="~/Scripts/moment.js"></script>
+    <script src="~/Scripts/sabio.addresses.services.js"></script>
+    <script src="~/Scripts/sabio.listings.services.js"></script>
+    <script src="~/Scripts/sabio.upload.service.js"></script>
+    <script src="~/Scripts/sabio.amentites.services.js"></script>
+    <script type="text/javascript">
+
+        (function () {
+            "use strict";
+            /////////////////////////////Addressfactory///////////////////////////////////
+            angular.module(APPNAME)
+                .factory('$addressServices', addressServiceFactory);
+
+            addressServiceFactory.$inject = ['$baseService', '$sabio'];
+
+            function addressServiceFactory($baseService, $sabio) {
+                var aSabioServiceObject = sabio.addresses.services;
+
+                var newService = $baseService.merge(true, {}, aSabioServiceObject, $baseService);
+
+                return newService;
+            }
+            /////////////////////////////Addressfactory///////////////////////////////////
+
+            ///////////////////////////////////listing factory/////////////////////////////////////
+            angular.module(APPNAME)
+                .factory('$listingService', listingServiceFactory);
+
+            listingServiceFactory.$inject = ['$baseService', '$sabio'];
+
+            function listingServiceFactory($baseService, $sabio) {
+                var aSabioServiceObject = sabio.listings.services;
+
+                var newService = $baseService.merge(true, {}, aSabioServiceObject, $baseService);
+
+                return newService;
+            }
+
+            ///////////////////////////////////listing factory/////////////////////////////////////
+
+            /////////////////////////////////////upload factory/////////////////////////////////
+            angular.module(APPNAME)
+                .factory('$uploadServices', uploadServiceFactory);
+
+            uploadServiceFactory.$inject = ['$baseService', '$sabio'];
+
+            function uploadServiceFactory($baseService, $sabio) {
+                var aSabioServiceObject = sabio.upload.services;
+
+                var newService = $baseService.merge(true, {}, aSabioServiceObject, $baseService);
+
+                return newService;
+            }
+
+            /////////////////////////////////////amentites factory/////////////////////////////////
+            angular.module(APPNAME)
+            .factory('$amentityService', AmentityServiceFactory)
+
+            AmentityServiceFactory.$inject = ['$baseService', '$sabio'];    //  $sabio is a reference to sabio.page object which is created in sabio.js
+
+            function AmentityServiceFactory($baseService, $sabio) {
+
+                var aSabioServiceObject = sabio.amentities.services;
+
+                var newService = $baseService.merge(true, {}, aSabioServiceObject, $baseService);
+
+
+
+                return newService;
+            }
+
+            ////////////////////////////////Address /////////////////////////
+            angular.module(APPNAME)
+                .controller('wizardController', wizardController);
+
+            wizardController.$inject = ['$scope', '$baseController', "$addressServices", "$listingService", "$uploadServices", "$amentityService"];
+
+            function wizardController($scope, $baseController, $addressServices, $listingService, $uploadServices, $amentityService) {
+
+
+
+                var vm = this;
+
+                vm.$addressServices = $addressServices;
+                vm.$scope = $scope;
+                vm.onError = _onError;
+                vm.addresses = null;
+                vm.address;
+                vm.select = _select;
+                vm.myValue = 0;
+                vm.isSelected = null;
+                vm.onSuccessGetByID = _onSuccessGetByID;
+                vm.onSuccessSearch = _onSuccessSearch;
+                vm.selectedTile = _selectedTile;
+                vm.CarouselDemoCtrl = _CarouselDemoCtrl;
+                vm.selectPhoto = _selectPhoto;
+                vm.$amentityService = $amentityService;
+                vm.getAmentitySuccess = _getAmentitySuccess;
+
+
+                $baseController.merge(vm, $baseController);
+                vm.$systemEventService.broadcast("heading", { 'heading': 'Listing Wizard' })
+
+
+                var _selected;
+
+                $scope.selected = undefined;
+
+                $scope.getLocation = function (address) {
+                    sabio.addresses.services.searchAddress(address, _onSuccessSearch, _onErrorSearch);
+
+                };
+
+
+
+                function _onSuccessSearch(data) {
+
+                    vm.notify(function () {
+                        vm.addresses = data.items;
+
+                        vm.address2all = data.items.address2;
+                    })
+
+                }
+                function _onErrorSearch() {
+                    console.log("not working")
+                }
+
+                function _onError() {
+
+                    console.log("Error");
+                }
+
+                function _select(address) {
+
+                    vm.selectedAddress = address.id;
+                    sabio.page.addressId = vm.selectedAddress;
+                    vm.$addressServices.getById(sabio.page.addressId, _onSuccessGetByID, _onError)
+                }
+
+                function _onSuccessGetByID(data) {
+
+                    vm.notify(function () {
+                        vm.addressById = data.item;
+
+                        vm.address2 = data.item.address2;
+
+                        sabio.page.address = data.item;
+                        vm.addressIdPayload = data.item.id;
+
+                        vm.$amentityService.getAll(vm.getAmentitySuccess, vm.onError);
+                    })
+                }
+
+                function _getAmentitySuccess(data) {
+
+                    vm.amentityList = data.items;
+
+                }
+
+                vm.myVar = 0;
+
+                function _selectedTile(id) {
+                    vm.myVar = id;
+
+                }
+
+
+                //////////////////////////////Listings////////////////////////////////
+
+                vm.$listingService = $listingService;
+                vm.listingData = _listingData
+                vm.newlisting = {}
+
+
+                function _listingData() {
+                    if (vm.registerForm.$valid) {
+                        sabio.page.listing = $.extend(true, {}, vm.newlisting);
+                        sabio.page.listing.availableDate = sabio.page.listing.availableDate.toISOString();
+                        vm.listing = sabio.page.listing;
+
+
+
+                        if (vm.newlisting.status) {
+                            vm.listing.status = "yes";
+                        }
+                        else {
+                            vm.listing.status = 'no';
+                        }
+                        if (vm.newlisting.parkingIncluded) {
+                            vm.listing.parkingIncluded = 'yes';
+                        }
+                        else {
+                            vm.listing.parkingIncluded = 'no';
+                        }
+                        if (vm.newlisting.featured) {
+                            vm.listing.featured = 'yes';
+                        }
+                        else {
+                            vm.listing.featured = 'no'
+                        }
+                        if (vm.newlisting.utilitiesIncluded) {
+                            vm.listing.utilitiesIncluded = 'yes';
+                        }
+                        else {
+                            vm.listing.utilitiesIncluded = 'no'
+                        }
+                    }
+                }
+
+
+
+                //////////////////////////////Upload ///////////////////////////////////
+
+
+                vm.headingInfo = "Upload Files";
+                vm.items = null;
+                vm.selectedUpload = null;
+                vm.files = null;
+                vm.$uploadServices = $uploadServices;
+                vm.receiveItems = _receiveItems;
+                vm.selectUpload = _selectUpload;
+                vm.onEmpError = _onEmpError;
+
+                $baseController.merge(vm, $baseController);
+
+                vm.imgPrefix = vm.$sabio.imgPrefix;
+                vm.notify = vm.$uploadServices.getNotifier($scope);
+
+
+                function _selectUpload(files) {
+
+                    vm.files = document.querySelector("#fileUpload").files;
+
+                    var data = new FormData();
+
+                    $.each(vm.files, function (key, value) {
+                        data.append(key, value);
+                    });
+
+                    vm.$uploadServices.upload(data, vm.receiveItems, vm.onEmpError);
+                }
+
+                vm.uploadSuccess = null;
+
+                function _receiveItems(data) {
+                    vm.notify(function () {
+                        vm.items = data.items;
+                        sabio.page.picture = data.items;
+                        vm.uploadFailed = null;
+                        vm.uploadSuccess = "Please Select a primary photo"
+                    });
+                }
+
+                vm.uploadFailed = null;
+
+                function _onEmpError() {
+
+                    vm.notify(function () {
+                        vm.uploadFailed = "They file upload has failed, because the files have exceeded the maximum allowable size.  Please choose fewer files and try again";
+                        console.log("error");
+                    })
+
+                }
+
+                function _CarouselDemoCtrl() {
+
+                    vm.myInterval = 5000;
+                    vm.noWrapSlides = false;
+                    vm.active = 0;
+                    var slides = $scope.slides = [];
+                    var currIndex = 0;
+                }
+
+
+
+                function _selectPhoto(item) {
+
+                    vm.selectedPhoto = item.id;
+                    vm.showButtonPhoto = true;
+
+                }
+
+                //////////////////////////////confirm ///////////////////////////////////
+                vm.confirmSubmit = _confirmSubmit;
+                vm.onSuccessInsert = _onSuccessInsert;
+
+                vm.successfulUpload = true;
+
+                function _confirmSubmit() {
+
+                    if (vm.listing.status == "yes") {
+                        sabio.page.listing.status = true;
+                    }
+                    else {
+                        sabio.page.listing.status = false;
+                    }
+                    if (vm.listing.parkingIncluded == "yes") {
+                        sabio.page.listing.parkingIncluded = true;
+                    }
+                    else {
+                        sabio.page.listing.parkingIncluded = false;
+                    }
+                    if (vm.listing.status.featured == "yes") {
+                        sabio.page.listing.featured = true;
+                    }
+                    else {
+                        sabio.page.listing.featured = false;
+                    }
+                    if (vm.listing.status.utilitiesIncluded == "yes") {
+                        sabio.page.listing.utilitiesIncluded = true;
+                    }
+                    else {
+                        sabio.page.listing.utilitiesIncluded = false;
+                    }
+
+
+                    var pictureData = sabio.page.picture
+
+
+
+                    vm.imageId = [];
+
+                    for (var i = 0 ; i < pictureData.length; i++) {
+                        vm.imageId.push(pictureData[i].id)
+                    }
+
+                    console.log(vm.imageId);
+
+                    sabio.page.listing.PrimaryImageId = vm.selectedPhoto;
+                    sabio.page.listing.AddressID = vm.addressIdPayload;
+                    sabio.page.listing.imageId = vm.imageId;
+
+                    vm.$listingService.insert(sabio.page.listing, _onSuccessInsert, _onError)
+                }
+
+                function _onSuccessInsert(data) {
+                    vm.$alertService.success("Your listing has been added!")
+                    vm.successfulUpload = false;
+                }
+            }
+        })();
+    </script>
+}
+

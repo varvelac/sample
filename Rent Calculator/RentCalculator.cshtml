@@ -1,0 +1,357 @@
+﻿@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_LayoutPublic.cshtml";
+}
+<style>
+    .selected {
+        background-color: #d3cfcf;
+    }
+</style>
+
+<head>
+    <script type="text/javascript">
+        function stopRKey(evt) {
+            var evt = (evt) ? evt : ((event) ? event : null);
+            var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
+            if ((evt.keyCode == 13) && (node.type == "text")) { return false; }
+        }
+
+        document.onkeypress = stopRKey;
+    </script>
+    <link href="~/Content/userProfile.css" rel="stylesheet" />
+</head>
+
+
+<div data-ng-controller="CalculatorController as ctrl" ng-cloak>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-4">
+                <h4 style="text-align:center">Lookup An Address</h4><br />
+                <form method="post" action="?" class="mortgage-calculator">
+
+                    <div class="form-group">
+                        <input type="text" ng-model="typeAhead"
+                               placeholder="Type in an address"
+                               uib-typeahead="address for address in ctrl.getLocation($viewValue)"
+                               class="form-control"
+                               value="{{ctrl.addressById.address1}}">
+                    </div>
+                    <div style="height: 300px !important; overflow-y: scroll;overflow-x: hidden;">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Address</th>
+                                    <th>Unit</th>
+                                    <th>City</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="address in ctrl.addresses | filter:address | limitTo:32">
+                                    <th scope="row"
+                                        ng-class="{selected: ctrl.selected == address.id }"
+                                        ng-click="ctrl.select(address)">
+                                        {{address.address1}}
+                                    </th>
+                                    <td ng-class="{selected: ctrl.selected == address.id }">
+                                        {{address.address2}}
+                                    </td>
+                                    <td ng-class="{selected: ctrl.selected == address.id }">
+                                        {{address.city}}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+                <div style="height:20px"></div>
+            </div>
+
+            <div class="col-sm-4">
+                <div class="row">
+                    <button uib-popover="To calculate the monthly surcharge, divide the amount by the total number of units on the property (even if vacant or not a residential rental unit), and then divide by 12 (months). "
+                            popover-placement="left"
+                            popover-trigger
+                            type="button" class="btn btn-default" style="float:right">
+                        <i class="glyphicon glyphicon-question-sign"></i>
+                    </button>
+                    <h4 style="text-align:center">
+                        Add Allowable Surcharges
+                    </h4>
+
+                </div>
+                <br />
+                <form method="post" action="?" class="mortgage-calculator">
+                    kd
+                    <div class="form-group">
+                        <label>
+                            Community College Bond
+                        </label><button uib-popover="Appears on tax bill as COMMNTY COLLEGE. Amounts vary by
+property depending on the assessed value and may be adjusted each January."
+                                        popover-trigger
+                                        type="button" class="btn btn-default">
+                            <i class="glyphicon glyphicon-question-sign"></i>
+                        </button>
+
+                        <input type="number" class="form-control"
+                               placeholder="Enter Number" value="0"
+                               ng-model="ctrl.total.commColl">
+                    </div><!-- /.form-group -->
+
+                    <div class="form-group">
+                        <label>
+                            Unified Schools Bond
+                        </label><button uib-popover="Appears on tax bill as UNIFIED SCHOOLS. Amounts vary by property
+depending on the assessed value and may be adjusted each January"
+                                        popover-trigger
+                                        type="button" class="btn btn-default">
+                            <i class="glyphicon glyphicon-question-sign"></i>
+                        </button>
+                        <input type="number" class="form-control"
+                               placeholder="Enter Number" value="0"
+                               ng-model="ctrl.total.uniSchDist">
+                    </div><!-- /.form-group -->
+
+                    <div class="form-group">
+                        <label>
+                            Storm Water Management Fee
+                        </label><button uib-popover="Appears on tax bill as SM STRMH2O FEE. As with the
+bonds listed above, amounts vary by property and may be adjusted each January."
+                                        popover-trigger
+                                        type="button" class="btn btn-default">
+                            <i class="glyphicon glyphicon-question-sign"></i>
+                        </button>
+                        <input type="number" class="form-control"
+                               placeholder="Enter Number" value="0"
+                               ng-model="ctrl.total.strmWater">
+                    </div><!-- /.form-group -->
+
+                    <div class="form-group">
+                        <label>
+                            SMMUISD or School District Parcel Tax
+                        </label><button uib-popover="Appears on tax bill as SMMUSD-MEAS-R. The amount of this
+tax is the same for every parcel, and owners are not required to provide a copy of their tax bill
+to pass this surcharge on to tenants. The amount is currently $376.77 per year per parcel,
+although the law establishing the tax provides for an annual adjustment for inflation."
+                                        popover-trigger
+                                        type="button" class="btn btn-default">
+                            <i class="glyphicon glyphicon-question-sign"></i>
+                        </button>
+                        <input type="number" class="form-control"
+                               placeholder="Enter Number" value="0"
+                               ng-model="ctrl.total.SMMUISD">
+                    </div><!-- /.form-group -->
+
+                    <div class="form-group">
+                        <label>
+                            Registration Fee
+
+                        </label><button uib-popover="The Rent Control registration fee is $174.96 per unit per year."
+                                        popover-trigger
+                                        type="button" class="btn btn-default">
+                            <i class="glyphicon glyphicon-question-sign"></i>
+                        </button>
+                        <input type="number" class="form-control"
+                               placeholder="Enter Number" value="0"
+                               ng-model="ctrl.total.registration">
+                    </div><!-- /.form-group -->
+
+                    <div class="form-group">
+                        <label>
+                            SCEP (LA)
+
+                        </label><button uib-popover="Appears on tax bill as SM CLN BEACH TAX. Amounts
+vary by property and may be adjusted each year.
+All low-income tenants may have this surcharge waived (and reduce the tax charged the
+owner). The tenant's total household income must be less than $28,619 for a person living
+alone, or $32,793 for a household of two or more. For a tax-waiver application, call (310) 458-
+8751."
+                                        popover-trigger
+                                        type="button" class="btn btn-default">
+                            <i class="glyphicon glyphicon-question-sign"></i>
+                        </button>
+                        <input type="number" class="form-control"
+                               placeholder="Enter Number" value="0"
+                               ng-model="ctrl.total.SCEP">
+                    </div><!-- /.form-group -->
+
+                </form>
+                <div style="height:20px"></div>
+
+            </div>
+            <div class="col-sm-4">
+                <h4 style="text-align:center"> Maximum Lawful Rent</h4>
+                <br />
+                <div style="height:100px">
+                    <div class="form-group-bottom-link"></div>
+
+                    <br />
+                    <h3 style="text-align:center">
+                        {{ctrl.total.SCEP + ctrl.total.registration + ctrl.total.SMMUISD + ctrl.total.strmWater + ctrl.total.uniSchDist + ctrl.total.commColl + ctrl.addressById.maximumAllowableRent | currency}}
+                    </h3>
+                    <!-- /.form-group -->
+                </div>
+                <br /><br />
+                <button uib-popover="These are estimated projections based on a yearly allowable increase to rent under the Rent Control program"
+                        popover-trigger
+                        popover-placement="left"
+                        type="button" class="btn btn-default"
+                        style="float:right">
+                    <i class="glyphicon glyphicon-question-sign"></i>
+                </button>
+                <h4 style="text-align:center">
+                    Future Rent Projections
+                </h4>
+                <br />
+
+                <div class="form-group-bottom-link"></div>
+                <div ng-show="ctrl.showProjection">
+                    <br />
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <td>1 Year Projection :</td>
+                                <td>5 Year Projection :</td>
+                                <td>10 Year Projection :</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th>
+                                    {{ctrl.total.SCEP + ctrl.total.registration + ctrl.total.SMMUISD + ctrl.total.strmWater + ctrl.total.uniSchDist + ctrl.total.commColl + ctrl.addressById.maximumAllowableRent + (ctrl.addressById.maximumAllowableRent * .035) | currency}}
+                                </th>
+                                <th>
+                                    {{ctrl.total.SCEP + ctrl.total.registration + ctrl.total.SMMUISD + ctrl.total.strmWater + ctrl.total.uniSchDist + ctrl.total.commColl + ctrl.addressById.maximumAllowableRent + ( 5 *(ctrl.addressById.maximumAllowableRent * .035)) | currency}}
+                                </th>
+                                <th>
+                                    {{ctrl.total.SCEP + ctrl.total.registration + ctrl.total.SMMUISD + ctrl.total.strmWater + ctrl.total.uniSchDist + ctrl.total.commColl + ctrl.addressById.maximumAllowableRent + ( 10 * (ctrl.addressById.maximumAllowableRent * .035)) | currency}}
+                                </th>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@section scripts{
+    <script src="~/Scripts/moment.js"></script>
+    <script src="~/Scripts/sabio.addresses.services.js"></script>
+    <script type="text/javascript">
+
+        (function () {
+            "use strict";
+            /////////////////////////////Addressfactory///////////////////////////////////
+            angular.module(APPNAME)
+                .factory('$addressServices', addressServiceFactory);
+
+            addressServiceFactory.$inject = ['$baseService', '$sabio'];
+
+            function addressServiceFactory($baseService, $sabio) {
+                var aSabioServiceObject = sabio.addresses.services;
+
+                var newService = $baseService.merge(true, {}, aSabioServiceObject, $baseService);
+
+                return newService;
+            }
+        //////////////////////// Controller////////////////////////////////////////////////////
+            angular.module(APPNAME)
+                .controller('CalculatorController', CalculatorController);
+
+            CalculatorController.$inject = ['$scope', '$baseController', "$addressServices"];
+
+            function CalculatorController($scope, $baseController, $addressServices) {
+
+                var vm = this;
+
+                vm.$addressServices = $addressServices;
+                vm.$scope = $scope;
+                vm.onError = _onError;
+                vm.addresses = null;
+                vm.address;
+                vm.select = _select;
+                vm.myValue = 0;
+                vm.isSelected = null;
+                vm.onSuccessGetByID = _onSuccessGetByID;
+                vm.onSuccessSearch = _onSuccessSearch;
+                vm.notify = vm.$addressServices.getNotifier($scope);
+
+
+
+
+                $baseController.merge(vm, $baseController);
+                vm.$systemEventService.broadcast("heading", { 'heading': 'Rent Calculator' })
+
+
+                var _selected;
+                vm.selected = undefined;
+                vm.total = {};
+
+                vm.getLocation = function (address) {
+
+                    sabio.addresses.services.searchAddress(address, _onSuccessSearch, _onErrorSearch);
+                };
+
+                function _onSuccessSearch(data) {
+
+                    vm.notify(function () {
+                        vm.addresses = data.items;
+
+                    })
+                }
+                function _onErrorSearch() {
+                    console.log("not working")
+                }
+
+                function _onError() {
+
+                    console.log("Error");
+                }
+
+                function _select(address) {
+
+                    vm.selectedAddress = address.id;
+                    vm.$addressServices.getById(vm.selectedAddress, _onSuccessGetByID, _onError)
+                    vm.selected = vm.selectedAddress
+
+                    vm.showProjection = true;
+                }
+
+                function _onSuccessGetByID(data) {
+
+                    vm.notify(function () {
+                        vm.addressById = data.item;
+                        console.log(vm.addressById);
+
+                        sabio.page.address = data.item;
+                        vm.addressIdPayload = data.item.id;
+                    })
+                }
+
+                vm.showCalculatorFun = _showCalculatorFun
+                function _showCalculatorFun() {
+                    console.log("working")
+
+                    vm.showCalculator = true;
+                }
+            }
+
+        })();
+    </script>
+}
