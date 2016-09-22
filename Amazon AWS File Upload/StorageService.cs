@@ -20,7 +20,7 @@ public class StorageService : IStorageService
 {
     private IAmazonS3 client = null;
 
-    private const string awsBucketName = "sabio-training/C19";
+    private const string awsBucketName = "sabio/C19";
 
     private IUserService _userServices;
     private IFileServices _fileServices;
